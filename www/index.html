@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp OTP Spam Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .container h2 {
+            margin-bottom: 20px;
+        }
+        .container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .container button:hover {
+            background-color: #128c7e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Send OTP via WhatsApp Bot</h2>
+        <form id="otpForm">
+            <input type="text" id="phoneNumber" placeholder="Enter Phone Number" required>
+            <button type="submit">Send OTP</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('otpForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const otp = generateOTP();
+
+            const message = `Your OTP is: ${otp}`;
+
+            // Twilio API details
+            const accountSid = 'YOUR_TWILIO_ACCOUNT_SID';
+            const authToken = 'YOUR_TWILIO_AUTH_TOKEN';
+            const twilioNumber = 'whatsapp:YOUR_TWILIO_WHATSAPP_NUMBER';
+
+            // Construct the Twilio API URL
+            const apiUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+            // Create a new XMLHttpRequest
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', apiUrl, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('Authorization', `Basic ${btoa(`${accountSid}:${authToken}`)}`);
+
+            // Send the message
+            xhr.send(`From=${twilioNumber}&Body=${encodeURIComponent(message)}&To=whatsapp:${phoneNumber}`);
+
+            alert('OTP sent successfully!');
+        });
+
+        function generateOTP() {
+            // Generate a random 6-digit OTP
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+    </script>
+</body>
+</html>
